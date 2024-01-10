@@ -1,0 +1,11 @@
+@mixin mobileWidth {
+    @media (max-width: 767px) {
+        @content;
+    }
+}
+
+@mixin mobileHeight {
+    @media (max-height: 760px) {
+        @content;
+    }
+}
