@@ -1,6 +1,6 @@
-import { sentMessage } from "./api.js";
+import { sentMessage, sentAudio } from "./api.js";
 import { chatRow } from "./chatRow.js";
-import { appendChild, closeWithKeyDown } from "./helpers.js";
+import { appendChild, closeWithKeyDown, recordAudio } from "./helpers.js";
 import { template } from "./template.js";
 
 export class ChatBot {
@@ -42,7 +42,7 @@ export class ChatBot {
         this.chatBot.dataset.visible = 'true';
         const chatBotInput = this.chatBot.querySelector('#message_chat_bot');
         if (chatBotInput) {
-            chatBotInput.focus()
+            chatBotInput.focus();
         }
         this.formAddSubmitEvent();
         this.escapeCloseHandle(true);
@@ -118,29 +118,44 @@ export class ChatBot {
             this.scrollToBottom();
             try {
                 const response = await sentMessage(messageInputValue);
-                const {type, text} = response || {};
-                if (type === 'string') {
-                    const messageChatBot = text;
-                    const botMessageRow = chatRow("left", messageChatBot);
-                    appendChild(chatList, botMessageRow);
-                } else if (type === 'object') {
-                    const { responses } = response || {};
-                    const rows = responses.map((responseItem) => {
-                        const { text: messageText, linkUrl, linkText } = responseItem || { text: '', linkUrl: '', linkText: '' };
-                        const botMessageRow = chatRow("left", messageText, linkUrl, linkText);
-                        if (responseItem?.element) {
-                            appendChild(botMessageRow.querySelector('.chat__text'), responseItem?.element);
-                        }
-                        return botMessageRow;
-                    });
-                    appendChild(chatList, ...rows);
-                    this.scrollToBottom();
-                } 
+                this.handleBotResponse(response);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             } finally {
-                console.log("end.");
+                console.log("End.");
             }
         }
+    }
+
+    async recordAndSendAudio() {
+        try {
+            const audioBlob = await recordAudio();
+            const response = await sentAudio(audioBlob);
+            this.handleBotResponse(response);
+        } catch (error) {
+            console.error('Error recording/sending audio:', error);
+        }
+    }
+
+    handleBotResponse(response) {
+        const chatList = this.body.querySelector(".chat__content");
+
+        if (response.type === 'string') {
+            const messageChatBot = response.text;
+            const botMessageRow = chatRow("left", messageChatBot);
+            appendChild(chatList, botMessageRow);
+        } else if (response.type === 'object') {
+            const { responses } = response;
+            const rows = responses.map((responseItem) => {
+                const { text: messageText, linkUrl, linkText } = responseItem;
+                const botMessageRow = chatRow("left", messageText, linkUrl, linkText);
+                if (responseItem?.element) {
+                    appendChild(botMessageRow.querySelector('.chat__text'), responseItem?.element);
+                }
+                return botMessageRow;
+            });
+            appendChild(chatList, ...rows);
+        }
+        this.scrollToBottom();
     }
 }

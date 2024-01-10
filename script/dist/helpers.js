@@ -5,6 +5,35 @@ export function closeWithKeyDown(event) {
     }
 }
 
+export async function recordAudio() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        let recordedChunks = [];
+
+        mediaRecorder.ondataavailable = function(event) {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        return new Promise((resolve) => {
+            mediaRecorder.onstop = function() {
+                const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+                const audioFile = new File([audioBlob], "voice.wav", { type: "audio/wav" });
+                resolve(audioFile);
+            };
+
+            mediaRecorder.start();
+            setTimeout(() => mediaRecorder.stop(), 5000);
+        });
+    } catch (error) {
+        console.error('Error recording audio:', error);
+        throw error;
+    }
+}
+
+
 export const BASE_URL = 'https://mygov-bot.empty.uz';
 // export const BASE_URL = "http://192.168.1.122:8000";
 
