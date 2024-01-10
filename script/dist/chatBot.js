@@ -82,12 +82,14 @@ export class ChatBot {
     formAddSubmitEvent() {
         const form = this.body.querySelector("#chat-bot-form");
         const chatInput = form.querySelector("#message_chat_bot");
+        const sendVoice = form.querySelector(".chat__form-send-voice-btn");
 
         if (form) {
             form.addEventListener("submit", (event) => {
                 this.onSubmit.call(this, event);
             });
         }
+
 
         if (chatInput) {
             chatInput.addEventListener("keydown", (event) => {
@@ -99,6 +101,12 @@ export class ChatBot {
                     };
                     this.onSubmit.call(this, args);
                 }
+            });
+        }
+
+        if (sendVoice) {
+            sendVoice.addEventListener("click", (event) => {
+                this.recordAndSendAudio.call(this, event);
             });
         }
     }
@@ -127,7 +135,9 @@ export class ChatBot {
         }
     }
 
-    async recordAndSendAudio() {
+    async recordAndSendAudio(event) {
+        console.log(event)
+        event.stopPropagation()
         try {
             const audioBlob = await recordAudio();
             const response = await sentAudio(audioBlob);

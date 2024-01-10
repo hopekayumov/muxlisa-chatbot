@@ -2,11 +2,6 @@ import { appendChild, createElement } from "./helpers.js";
 import { ChatBot } from "./chatBot.js";
 
 export const chatBotForm = () => {
-  let isRecording = false;
-  let mediaRecorder = null;
-  let recordedAudio = null;
-
-
   const chatForm = createElement('form', 'chat__form');
   chatForm.id = 'chat-bot-form';
   const textarea = createElement('textarea', 'chat__input');
@@ -18,11 +13,10 @@ export const chatBotForm = () => {
   const chatFormBtns = createElement('div', 'chat__form-btns');
   const chatFormSendBtn = createElement('button', 'chat__form-send-btn');
   const recordAudioBtn = createElement('button', 'chat__form-send-voice-btn');
-
-  recordAudioBtn.addEventListener('click', async () => {
-    const chatBot = new ChatBot();
-    await chatBot.recordAndSendAudio();
-  });
+  recordAudioBtn.dataset.type='voiceSend';
+  chatFormSendBtn.formAction = "sendText"
+  recordAudioBtn.formAction = "sendVoice"
+  recordAudioBtn.type = "button"
 
   appendChild(chatFormBtns, chatFormSendBtn, recordAudioBtn);
   appendChild(chatForm, textarea, chatFormBtns);
