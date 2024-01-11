@@ -1,6 +1,6 @@
 import { BASE_URL, responseFormatter } from "./helpers.js";
 
-
+let voiceMessage = null
 export async function sentAudio(audioBlob) {
     try {
         const URL = `https://api.muxlisa.uz/v1/api/services/stt/`;
@@ -14,7 +14,9 @@ export async function sentAudio(audioBlob) {
 
         if (response.status === 200) {
             const responseData = response.data;
-            return responseFormatter(responseData);
+            console.log();
+            voiceMessage = responseData.message.result.text
+            return responseData.message.result.text;
         } else {
             throw new Error('Failed to send audio.');
         }
@@ -27,7 +29,9 @@ export async function sentAudio(audioBlob) {
 export function sentMessage(message = '') {
     const URL = `${BASE_URL}/api/gov/gov-asisant/`;
 
-    return axios.post(URL, { message }, {
+    const content = voiceMessage ? voiceMessage : message;
+
+    return axios.post(URL, { message: content }, {
         headers: {
             'Content-Type': 'application/json',
         },

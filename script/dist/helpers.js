@@ -6,26 +6,35 @@ export function closeWithKeyDown(event) {
 }
 
 export async function recordAudio() {
+    const sendVoice = document.querySelector(".chat__form-send-voice-btn");
+
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
         const mediaRecorder = new MediaRecorder(stream);
         let recordedChunks = [];
 
-        mediaRecorder.ondataavailable = function(event) {
+        mediaRecorder.ondataavailable = function (event) {
             if (event.data.size > 0) {
                 recordedChunks.push(event.data);
             }
         };
 
         return new Promise((resolve) => {
-            mediaRecorder.onstop = function() {
-                const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
-                const audioFile = new File([audioBlob], "voice.wav", { type: "audio/wav" });
+            mediaRecorder.onstop = function () {
+                const audioBlob = new Blob(recordedChunks, {type: 'audio/wav'});
+                const audioFile = new File([audioBlob], "voice.wav", {type: "audio/wav"});
                 resolve(audioFile);
             };
 
             mediaRecorder.start();
-            setTimeout(() => mediaRecorder.stop(), 5000);
+
+            sendVoice.addEventListener("click", () => {
+                if (sendVoice.hasAttribute("recorded")) {
+                    mediaRecorder.stop();
+                    console.log("stopped")
+                }
+            });
+
         });
     } catch (error) {
         console.error('Error recording audio:', error);
@@ -143,7 +152,7 @@ function insertTextLink(str = "") {
     element.style.textDecoration = "none"
     element.style.color = "#000"
 
-    if(resultLink) {
+    if (resultLink) {
         element.style.textDecoration = "none"
         element.style.color = "blue"
     }

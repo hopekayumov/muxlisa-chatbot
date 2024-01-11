@@ -7,6 +7,7 @@ export class ChatBot {
     body = document.body;
     visible = false;
 
+
     constructor() {
         this.render();
     }
@@ -84,12 +85,12 @@ export class ChatBot {
         const chatInput = form.querySelector("#message_chat_bot");
         const sendVoice = form.querySelector(".chat__form-send-voice-btn");
 
+
         if (form) {
             form.addEventListener("submit", (event) => {
                 this.onSubmit.call(this, event);
             });
         }
-
 
         if (chatInput) {
             chatInput.addEventListener("keydown", (event) => {
@@ -105,8 +106,42 @@ export class ChatBot {
         }
 
         if (sendVoice) {
-            sendVoice.addEventListener("click", (event) => {
-                this.recordAndSendAudio.call(this, event);
+            let isRecording = false;
+            let recorded = false;
+
+            const chatList = form.previousElementSibling;
+
+            sendVoice.addEventListener("click", async (event) => {
+                event.preventDefault();
+
+                if (!isRecording) {
+                    isRecording = true;
+                    recorded = false;
+                    sendVoice.setAttribute("data-recording", "start-recording");
+
+                    const audioBlob = await recordAudio();
+                    const response = await sentAudio(audioBlob);
+
+
+                    if (response) {
+                        chatInput.value = "";
+                        const userMessageRow = chatRow("right", response);
+                        appendChild(chatList, userMessageRow);
+                        this.scrollToBottom();
+
+                        const voiceResponse = await sentMessage(response);
+                        this.handleBotResponse(voiceResponse);
+                    }
+
+                    this.handleBotResponse(response);
+                } else {
+                    isRecording = false;
+                    recorded = true
+                    if(recorded) {
+                        sendVoice.setAttribute("data-recording", "stop-recording");
+                        sendVoice.setAttribute("recorded", "true");
+                    }
+                }
             });
         }
     }
