@@ -18,6 +18,7 @@ export function chat() {
   chatBotIcon.appendChild(chatBotImg)
 
   appendChild(chatText, b, span, p);
+
   appendChild(chatLeft, chatBotIcon, chatText);
   appendChild(chatRow, chatLeft);
   appendChild(chatContent, chatRow);

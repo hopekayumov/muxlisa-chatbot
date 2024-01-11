@@ -5,6 +5,16 @@ export function closeWithKeyDown(event) {
     }
 }
 
+export function getFirstParagraph(text) {
+    const pattern = /^(.*?)[\r\n]{2}/s;
+    const match = pattern.exec(text);
+    if (match) {
+        return match[1].trim();
+    } else {
+        return "No paragraph found";
+    }
+}
+
 export async function recordAudio() {
     const sendVoice = document.querySelector(".chat__form-send-voice-btn");
 
@@ -106,15 +116,6 @@ export const responseFormatter = ({assistant} = {assistant: ""}) => {
     }
 };
 
-function getFirstParagraph(text) {
-    const pattern = /^(.*?)[\r\n]{2}/s;
-    const match = pattern.exec(text);
-    if (match) {
-        return match[1].trim(); // Return the first paragraph without leading/trailing spaces
-    } else {
-        return "No paragraph found";
-    }
-}
 
 function insertTextLink(str = "") {
     const links = [];

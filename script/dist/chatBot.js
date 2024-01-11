@@ -1,4 +1,4 @@
-import { sentMessage, sentAudio } from "./api.js";
+import { sentMessage, sendAudioAndConvert } from "./api.js";
 import { chatRow } from "./chatRow.js";
 import { appendChild, closeWithKeyDown, recordAudio } from "./helpers.js";
 import { template } from "./template.js";
@@ -120,16 +120,16 @@ export class ChatBot {
                     sendVoice.setAttribute("data-recording", "start-recording");
 
                     const audioBlob = await recordAudio();
-                    const response = await sentAudio(audioBlob);
-
+                    const response = await sendAudioAndConvert(audioBlob);
+                    const {text, audio} = response;
 
                     if (response) {
                         chatInput.value = "";
-                        const userMessageRow = chatRow("right", response);
+                        const userMessageRow = chatRow("right", text);
                         appendChild(chatList, userMessageRow);
                         this.scrollToBottom();
 
-                        const voiceResponse = await sentMessage(response);
+                        const voiceResponse = await sentMessage(text);
                         this.handleBotResponse(voiceResponse);
                     }
 
@@ -171,11 +171,10 @@ export class ChatBot {
     }
 
     async recordAndSendAudio(event) {
-        console.log(event)
         event.stopPropagation()
         try {
             const audioBlob = await recordAudio();
-            const response = await sentAudio(audioBlob);
+            const response = await sendAudioAndConvert(audioBlob);
             this.handleBotResponse(response);
         } catch (error) {
             console.error('Error recording/sending audio:', error);
@@ -187,6 +186,7 @@ export class ChatBot {
 
         if (response.type === 'string') {
             const messageChatBot = response.text;
+
             const botMessageRow = chatRow("left", messageChatBot);
             appendChild(chatList, botMessageRow);
         } else if (response.type === 'object') {
