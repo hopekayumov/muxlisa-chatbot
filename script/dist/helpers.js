@@ -163,8 +163,10 @@ function insertTextLink(str = "") {
         element.insertAdjacentText("beforeend", text.replace(combinedRegExp, ""));
         title.textContent = getFirstParagraph(str);
 
-        element.href = resultLink;
-        element.target = '_blank';
+        if (resultLink) {
+            element.href = resultLink;
+            element.target = '_blank';
+        }
 
 
         if (links[index]) {

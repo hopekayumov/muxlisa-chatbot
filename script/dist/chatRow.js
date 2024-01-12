@@ -4,6 +4,7 @@ export const chatRow = (leftRight = 'right', message = '', redirectLink = '', li
     const row = createElement('div', 'chat__row');
     const messageDate = createElement("div", 'message_date')
     const messageContent = createElement('div', `chat__${leftRight}`, leftRight === 'left' ? '' : message);
+    const messageLoader = createElement("div", "message-loader");
 
 
     if (leftRight === 'left') {

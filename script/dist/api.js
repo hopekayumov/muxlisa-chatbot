@@ -21,7 +21,6 @@ export async function sendAudioAndConvert(audioBlob) {
             ttsFormData.append('token', 'u0QbNDnxJGXCJOtRw5ZtfhnyBXxqs6GvUys_rpal');
             const response = await sentMessage(sttResultText);
             ttsFormData.append('text', getFirstParagraph(response.assistant?.main_response));
-            console.log(response.assistant?.main_response)
 
             const ttsResponse = await axios.post(ttsURL, ttsFormData, { responseType: "blob" });
             const ttsAudioBlob = await ttsResponse.data;
