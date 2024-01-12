@@ -1,6 +1,6 @@
 import { sentMessage, sendAudioAndConvert } from "./api.js";
 import { chatRow } from "./chatRow.js";
-import { appendChild, closeWithKeyDown, recordAudio } from "./helpers.js";
+import {appendChild, closeWithKeyDown, recordAudio, responseFormatter} from "./helpers.js";
 import { template } from "./template.js";
 
 export class ChatBot {
@@ -130,7 +130,7 @@ export class ChatBot {
                         this.scrollToBottom();
 
                         const voiceResponse = await sentMessage(text);
-                        this.handleBotResponse(voiceResponse);
+                        this.handleBotResponse(responseFormatter(voiceResponse));
                     }
 
                     this.handleBotResponse(response);
@@ -161,7 +161,7 @@ export class ChatBot {
             this.scrollToBottom();
             try {
                 const response = await sentMessage(messageInputValue);
-                this.handleBotResponse(response);
+                this.handleBotResponse(responseFormatter(response));
             } catch (error) {
                 console.error(error);
             } finally {

@@ -5,11 +5,8 @@ let voiceMessageAnswer = null;
 
 export async function sendAudioAndConvert(audioBlob) {
     try {
-        // STT API endpoint URL
         const sttURL = 'https://api.muxlisa.uz/v1/api/services/stt/';
-        // TTS API endpoint URL
         const ttsURL = 'https://api.muxlisa.uz/v1/api/services/tts/';
-
 
         const sttFormData = new FormData();
         sttFormData.append('token', 'u0QbNDnxJGXCJOtRw5ZtfhnyBXxqs6GvUys_rpal');
@@ -19,27 +16,22 @@ export async function sendAudioAndConvert(audioBlob) {
 
         if (sttResponse.status === 200) {
             const sttResultText = sttResponse.data.message.result.text;
-            console.log(sttResultText)
-
 
             const ttsFormData = new FormData();
             ttsFormData.append('token', 'u0QbNDnxJGXCJOtRw5ZtfhnyBXxqs6GvUys_rpal');
-            ttsFormData.append('text', getFirstParagraph(voiceMessageAnswer));
-            console.log(voiceMessageAnswer)
+            const response = await sentMessage(sttResultText);
+            ttsFormData.append('text', getFirstParagraph(response.assistant?.main_response));
+            console.log(response.assistant?.main_response)
 
-
-            const ttsResponse = await axios.post(ttsURL, ttsFormData, {
-                responseType: "blob"
-            });
-
+            const ttsResponse = await axios.post(ttsURL, ttsFormData, { responseType: "blob" });
             const ttsAudioBlob = await ttsResponse.data;
 
             const audioElement = new Audio();
             audioElement.src = URL.createObjectURL(ttsAudioBlob);
 
             await audioElement.play();
-            console.log(ttsAudioBlob)
-            return {text: sttResultText, audio: ttsAudioBlob};
+
+            return { text: sttResultText, audio: ttsAudioBlob };
         } else {
             throw new Error('Failed to perform speech-to-text.');
         }
@@ -49,62 +41,18 @@ export async function sendAudioAndConvert(audioBlob) {
     }
 }
 
-// export async function sentAudioResponse(text) {
-//     try {
-//         const URL = `https://api.muxlisa.uz/v1/api/services/tts/`;
-//         const formData = new FormData();
-//         formData.append('token', 'u0QbNDnxJGXCJOtRw5ZtfhnyBXxqs6GvUys_rpal')
-//         formData.append('text', text);
-//
-//
-//         const response = await axios.post(URL, formData);
-//
-//         if (response.status === 200) {
-//             const responseData = response.data;
-//             return responseData.message.result.text;
-//         } else {
-//             throw new Error('Failed to send audio.');
-//         }
-//     } catch (error) {
-//         console.error('Error sending audio:', error);
-//         throw error;
-//     }
-// }
-
-export function sentMessage(message = '') {
+export async function sentMessage(message = '') {
     const URL = `${BASE_URL}/api/gov/gov-asisant/`;
-
-    const content = voiceMessage ? voiceMessage : message;
-
-    return axios.post(URL, {message: content}, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => {
-            voiceMessageAnswer = response.data
-            console.log(getFirstParagraph(voiceMessageAnswer))
-            return responseFormatter(response.data);
-        })
-        .catch(error => {
-            console.error('Error sending message:', error);
-            throw new Error('Failed to send message.');
+    try {
+        const response = await axios.post(URL, { message: message }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
+        voiceMessageAnswer = response.data;
+        return voiceMessageAnswer;
+    } catch (error) {
+        console.error('Error sending message:', error);
+        throw error;
+    }
 }
-
-
-// with fetch
-// export function sentMessage(message = '') {
-//     const URL = BASE_URL + '/api/gov/gov-asisant/';
-
-//     const body = JSON.stringify({
-//         "message": message
-//     });
-//     return fetch(URL, {
-//         headers: {
-//             'Content-type': 'application/json'
-//         },
-//         method: 'POST',
-//         body: body
-//     });
-// }
