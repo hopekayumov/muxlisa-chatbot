@@ -11,7 +11,7 @@ export function getFirstParagraph(text) {
     if (match) {
         return match[1].trim();
     } else {
-        return "No paragraph found";
+        return text;
     }
 }
 
