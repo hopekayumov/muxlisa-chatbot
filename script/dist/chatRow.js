@@ -36,7 +36,7 @@ export const chatRow = (leftRight = 'right', message = '', redirectLink = '', li
         appendChild(messageContent, chatBotIcon, chatText);
     }
 
-    if(leftRight === "right") {
+    if (leftRight === "right") {
         const userLocale = navigator.language;
         const isRussian = userLocale.startsWith('ru');
 
@@ -46,7 +46,7 @@ export const chatRow = (leftRight = 'right', message = '', redirectLink = '', li
             month: 'short',
             hour: 'numeric',
             minute: 'numeric',
-            ...(isRussian && { locale: 'ru' })
+            ...(isRussian && {locale: 'ru'})
         };
 
         messageDate.textContent = currentDate.toLocaleDateString(userLocale, options);

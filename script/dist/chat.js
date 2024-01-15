@@ -8,14 +8,13 @@ export function chat() {
   const chatRow = createElement('div', 'chat__row');
   const chatLeft = createElement('div', 'chat__left');
   const chatBotIcon = createElement('div', 'chat__bot-icon');
-  const chatBotImg = createElement('div', 'chat__bot-img');
   const chatText = createElement('div', 'chat__text');
   const b = createElement('b', '', 'Operator ');
   const span = createElement('span', '', 'Muxlisa AI');
-  const p = createElement('p', '', 'Assalomu Alaykum 👋 Sizga bugun qanday yordam bera olaman?');
+  const p = createElement('p', '', 'Assalomu Alaykum 👋 Sizga qanday yordam bera olamiz?');
   p.style.fontSize = "16px"
   const chatForm = chatBotForm();
-  chatBotIcon.appendChild(chatBotImg)
+
 
   appendChild(chatText, b, span, p);
 
