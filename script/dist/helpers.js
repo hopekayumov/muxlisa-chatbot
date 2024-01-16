@@ -146,6 +146,7 @@ function insertTextLink(str = "") {
     const parentElement = document.createElement("div");
 
     const element = createElement("a", "wrapper");
+
     const title = createElement("p", "chat__title");
     title.style.marginBottom = "5px"
     title.style.fontSize = "16px"

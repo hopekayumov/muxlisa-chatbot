@@ -1,4 +1,6 @@
-import {BASE_URL, getFirstParagraph, responseFormatter} from "./helpers.js";
+import {appendChild, BASE_URL, getFirstParagraph} from "./helpers.js";
+import {chatRow} from "./chatRow.js";
+
 
 let voiceMessage = null;
 let voiceMessageAnswer = null;
@@ -22,7 +24,7 @@ export async function sendAudioAndConvert(audioBlob) {
             const response = await sentMessage(sttResultText);
             ttsFormData.append('text', getFirstParagraph(response.assistant?.main_response));
 
-            const ttsResponse = await axios.post(ttsURL, ttsFormData, { responseType: "blob" });
+            const ttsResponse = await axios.post(ttsURL, ttsFormData, {responseType: "blob"});
             const ttsAudioBlob = await ttsResponse.data;
 
             const audioElement = new Audio();
@@ -30,7 +32,7 @@ export async function sendAudioAndConvert(audioBlob) {
 
             await audioElement.play();
 
-            return { text: sttResultText, audio: ttsAudioBlob };
+            return {text: sttResultText, audio: ttsAudioBlob};
         } else {
             throw new Error('Failed to perform speech-to-text.');
         }
@@ -41,9 +43,12 @@ export async function sendAudioAndConvert(audioBlob) {
 }
 
 export async function sentMessage(message = '') {
+    const chatList = document.body.querySelector(".chat__content");
+    const botMessageRow = chatRow("left", "", "", "", true);
+    appendChild(chatList, botMessageRow);
     const URL = `${BASE_URL}/api/gov/gov-asisant/`;
     try {
-        const response = await axios.post(URL, { message: message }, {
+        const response = await axios.post(URL, {message: message}, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -53,5 +58,9 @@ export async function sentMessage(message = '') {
     } catch (error) {
         console.error('Error sending message:', error);
         throw error;
+    } finally {
+        if (chatList.contains(botMessageRow)) {
+            chatList.removeChild(botMessageRow);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import {appendChild, createElement} from "./helpers.js";
 
-export const chatRow = (leftRight = 'right', message = '', redirectLink = '', linkText = '') => {
+export const chatRow = (leftRight = 'right', message = '', redirectLink = '', linkText = '', isLoading = false) => {
     const row = createElement('div', 'chat__row');
     const messageDate = createElement("div", 'message_date')
     const messageContent = createElement('div', `chat__${leftRight}`, leftRight === 'left' ? '' : message);
@@ -12,8 +12,11 @@ export const chatRow = (leftRight = 'right', message = '', redirectLink = '', li
         const chatText = createElement('div', 'chat__text');
         const b = createElement('b', '', 'Operator');
         const span = createElement('span', '', ' Muxlisa AI');
-        const p = createElement('p', '', message);
+        const p = createElement('div', '', message);
 
+        if(isLoading) {
+            p.appendChild(messageLoader)
+        }
 
         if (redirectLink !== '' && !Array.isArray(redirectLink)) {
             const text = linkText === '' ? redirectLink : linkText;
