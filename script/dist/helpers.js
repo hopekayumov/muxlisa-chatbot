@@ -156,7 +156,7 @@ function insertTextLink(str = "") {
 
     if (resultLink) {
         element.style.textDecoration = "none"
-        element.style.color = "blue"
+        element.style.color = "#0d1c8c"
     }
 
 

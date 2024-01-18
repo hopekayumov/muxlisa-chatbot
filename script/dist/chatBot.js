@@ -170,17 +170,6 @@ export class ChatBot {
         }
     }
 
-    async recordAndSendAudio(event) {
-        event.stopPropagation()
-        try {
-            const audioBlob = await recordAudio();
-            const response = await sendAudioAndConvert(audioBlob);
-            this.handleBotResponse(response);
-        } catch (error) {
-            console.error('Error recording/sending audio:', error);
-        }
-    }
-
     handleBotResponse(response) {
         const chatList = this.body.querySelector(".chat__content");
 

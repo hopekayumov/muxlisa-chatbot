@@ -10,8 +10,16 @@ export function chat() {
   const chatBotIcon = createElement('div', 'chat__bot-icon');
   const chatText = createElement('div', 'chat__text');
   const b = createElement('b', '', 'Operator ');
-  const span = createElement('span', '', 'Muxlisa AI');
-  const p = createElement('p', '', 'Assalomu Alaykum 👋 Sizga qanday yordam bera olamiz?');
+  const span = createElement('span', 'chat__text-operator', 'Muxlisa AI');
+
+  // Greeting
+  const chatGreetingTitle = createElement("div", "greetingTitle","Assalomu Alaykum ");
+  const chatGreetingIcon = createElement("div", "wave", "👋 ");
+  const chatGreetingText = createElement("div", "greetingText", " Sizga qanday yordam bera olamiz?")
+  const p = createElement('div', "greeting");
+  appendChild(p, chatGreetingTitle, chatGreetingIcon, chatGreetingText)
+
+
   p.style.fontSize = "16px"
   const chatForm = chatBotForm();
 
